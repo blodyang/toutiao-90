@@ -1,7 +1,7 @@
 <template>
   <div class="layout-aside">
     <div class="title">
-      <img src="../assets/img/logo_admin.png" alt="">
+      <img src="../../assets/img/logo_admin.png" alt="">
     </div>
       <el-menu background-color="#353b4e" text-color="#adafb5" active-text-color="#ffd04b" >
         <el-menu-item>首页</el-menu-item>

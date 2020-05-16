@@ -6,7 +6,7 @@
     </el-col>
     <el-col :span="12">
         <el-row class="right" type="flex" justify="end" align="middle">
-            <img src="../assets/img/header.jpg" alt="">
+            <img src="../../assets/img/header.jpg" alt="">
             <el-dropdown>
                 <span>西红柿鸡蛋</span>
                 <el-dropdown-menu slot="dropdown">
