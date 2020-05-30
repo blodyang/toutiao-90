@@ -61,7 +61,7 @@ export default {
             data: this.loginForm
           }).then(result => {
             // 只接受正确结果
-            window.localStorage.setItem('user-token', result.data.data.token)
+            window.localStorage.setItem('user-token', result.data.token)
             this.$router.push('/home')
           }).catch(() => {
             this.$message({
