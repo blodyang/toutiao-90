@@ -8,7 +8,7 @@
      </el-col>
      <el-col class='right' :span="12">
          <el-row type='flex' justify="end" align="middle">
-             <img :src="userInfo.photo ? userInfo.photo : defaultImg" alt="">
+             <img :src="!userInfo.photo ? userInfo.photo : defaultImg" alt="">
              <!-- 下拉菜单 -->
              <el-dropdown @command="clickMenu">
                  <!-- 匿名插槽  下拉菜单显示的元素内容 -->
@@ -47,7 +47,7 @@ export default {
 
       } else if (command === 'git') {
         //   跳转到git地址
-        window.location.href = 'https://github.com/shuiruohanyu/90heimatoutiao'
+        window.location.href = 'https://www.baidu.com'
       } else {
         //    退出
         window.localStorage.removeItem('user-token') // 删除令牌
