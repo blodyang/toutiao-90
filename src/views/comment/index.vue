@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card  v-loading="loading" element-loading-text="拼命加载中">
       <bread-crumb slot="header">
         <template slot="title">
             评论管理
@@ -38,6 +38,7 @@ export default {
   data () {
     return {
       list: [],
+      loading: false,
       page: {
         total: 0,
         pageSize: 10,
@@ -51,12 +52,14 @@ export default {
       this.getComment()
     },
     getComment () {
+      this.loading = true
       this.$axios({
         url: 'articles',
         params: { response_type: 'comment', page: this.page.currentPage, per_page: this.page.pageSize }
       }).then(result => {
         this.list = result.data.results
         this.page.total = result.data.total_count
+        this.loading = false
       })
     },
     formatterBoolean (row, column, cellValue, index) {
