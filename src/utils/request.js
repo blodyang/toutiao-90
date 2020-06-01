@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '../router'
 import { Message } from 'element-ui'
+import JSONBIG from 'json-bigint'
 
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 设置一个常态值
 
@@ -17,6 +18,9 @@ axios.interceptors.request.use(function (config) {
 
 })
 
+axios.defaults.transformResponse = [function (data) {
+  return JSONBIG.parse(data)
+}]
 // 响应拦截器
 axios.interceptors.response.use(function (response) {
   // 成功时执行函数
@@ -44,6 +48,7 @@ axios.interceptors.response.use(function (response) {
       break
   }
   Message({ type: 'warning', message })
+  return Promise.reject(error)
 })
 
 export default axios

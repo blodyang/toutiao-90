@@ -49,12 +49,13 @@ export default {
 
       }).then(() => {
         this.$axios({
-          methods: 'put',
-          url: 'coments/status',
-          params: { article_id: row.id },
-          data: { allow_comment: !row.comment_status }
+          method: 'put',
+          url: '/comments/status',
+          params: { article_id: row.id.toString() },
+          data: { allow_comment: !row.comment_status } // 因为当前如果是打开 ,就要关闭 如果是关闭 就要打开
         }).then(result => {
-          this.getComment()
+          //  表示执行成功
+          this.getComment() // 重新拉取评论管理数据
         })
       })
     }
