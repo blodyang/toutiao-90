@@ -1,20 +1,11 @@
 <template>
-  <el-card v-loading="loading" class='articles'>
+  <el-card class='articles'>
       <bread-crumb slot='header'>
          <template slot='title'>文章列表</template>
       </bread-crumb>
       <!-- 表单容器 -->
       <el-form style="padding-left:50px">
           <el-form-item label="文章状态:">
-              <!-- 放置一个单选组  文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部-->
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-                 <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition">
-                  <el-radio :label="5">全部</el-radio>
-                  <el-radio :label="0">草稿</el-radio>
-                  <el-radio :label="1">待审核</el-radio>
-                  <el-radio :label="2">审核通过</el-radio>
-                  <el-radio :label="3">审核失败</el-radio>
-              </el-radio-group> -->
               <el-radio-group v-model="searchForm.status" >
                   <!-- label -->
                   <el-radio :label="5">全部</el-radio>
@@ -25,10 +16,6 @@
               </el-radio-group>
           </el-form-item>
           <el-form-item label="频道列表:">
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-               <!-- <el-select @change="changeCondition" placeholder="请选择频道" v-model="searchForm.channel_id">
-                  <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
-              </el-select> -->
               <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
                   <!-- el-option label是显示值 value是存储值 -->
                   <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -43,7 +30,7 @@
       </el-form>
       <el-row class='total' type='flex' align="middle">
           <span>
-              共找到10000条符合条件的内容
+              共找到{{page.total}}条符合条件的内容
           </span>
       </el-row>
       <div class='article-item' v-for="item in list" :key="item.id.toString()">
@@ -60,7 +47,8 @@
           <!-- 右侧 -->
           <div class='right'>
               <span><i class="el-icon-edit"></i>修改</span>
-              <span><i class="el-icon-delete"></i>删除</span>
+              <!-- 注册删除按钮事件 -->
+              <span @click="delMaterial(item.id)"><i class="el-icon-delete"></i>删除</span>
           </div>
       </div>
       <el-row type='flex' justify="center" align="middle" style="height:60px">
@@ -79,16 +67,16 @@ export default {
   data () {
     return {
       searchForm: {
-        status: 5, // 默认应该选中全部
-        channel_id: null, // 默认不选中任何一个分类
-        dateRange: [] // 日期范围
+        status: 5,
+        channel_id: null,
+        dateRange: []
       },
-      channels: [], // 接收频道数据
+      channels: [],
       list: [],
-      defaultImg: require('../../assets/img/header.jpg'), // 默认图片
+      defaultImg: require('../../assets/img/header.jpg'),
       page: {
         currentPage: 1,
-        pageSize: 10, // 黑马头条后端限制 最低10条 => 文章列表
+        pageSize: 10,
         total: 0
       }
     }
@@ -137,6 +125,25 @@ export default {
     }
   },
   methods: {
+    // 删除文章
+    delMaterial (id) {
+      this.$confirm('是否要删除该文章?').then(() => {
+        // 调用删除接口
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id.toString()}`
+        }).then(result => {
+          // 提示
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          // 重新拉取数据
+          // this.page.currentPage = 1 // 根据业务 处理 如果删除了数据 是否回到第一页根据具体业务而定
+          this.getConditionArticle()
+        })
+      })
+    },
     //   改变页码方法
     changePage (newPage) {
       this.page.currentPage = newPage // 最新页码
@@ -145,7 +152,7 @@ export default {
     //   改变条件
     changeCondition () {
       this.page.currentPage = 1 // 强制将页码重置第一页
-      this.getConditionArticle() // 调用获取文章数据\
+      this.getConditionArticle() // 调用获取文章数据
     },
     getConditionArticle () {
       const params = {
