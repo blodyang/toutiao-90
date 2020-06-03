@@ -6,15 +6,23 @@
             素材管理
         </template>
       </bread-crumb>
+      <!-- 上传 -->
+
+    <el-row type="flex" justify="end">
+       <el-upload action="" :http-request="uploadImg" :show-file-list="false">
+          <el-button size="small" type="primary">上传图片</el-button>
+      </el-upload>
+    </el-row>
+  <!-- 标签 -->
          <el-tabs v-model="activeName" @tab-click='changeTab'>
-          <!-- 标签 -->
+
           <el-tab-pane label="全部图片" name="all">
             <div class="img-list">
               <el-card class="img-card" v-for="item in list" :key="item.id">
                 <img :src="item.url" alt="">
                 <el-row  class="operate" align="middle" type="flex" justify="space-around">
-                  <i class="el-icon-star-on"></i>
-                  <i class="el-icon-delete"></i>
+                  <i @click="collectOrCancel(item)" :style="{ color: item.is_collected ? 'red' : '#000'}" class="el-icon-star-on"></i>
+                  <i @click="delImg(item.id)" class="el-icon-delete"></i>
                 </el-row>
               </el-card>
             </div>
@@ -43,6 +51,7 @@
 export default {
   data () {
     return {
+      loading: false,
       activeName: 'all',
       list: [],
       page: {
@@ -53,10 +62,47 @@ export default {
     }
   },
   methods: {
+    delImg (id) {
+      this.$confirm('确认删除该素材?').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/user/images/${id}`
+        }).then(result => {
+          this.getMaterial()
+        })
+      })
+    },
+    // 收藏或取消方法
+    collectOrCancel (item) {
+      this.$axios({
+        method: 'put',
+        url: `/user/images/${item.id}`,
+        data: {
+          collect: !item.is_collected
+        }
+      }).then(result => {
+        this.getMaterial()
+      })
+    },
+    // 上传图片方法
+    uploadImg (params) {
+      this.loading = true
+      const data = new FormData()
+      data.append('image', params.file)
+      this.$axios({
+        method: 'post',
+        url: '/user/images',
+        data
+      }).then(result => {
+        this.loading = false
+      })
+    },
+    // 改变页码方法
     changePage (newPage) {
       this.page.currentPage = newPage
       this.getMaterial()
     },
+    // 分页方法
     changeTab () {
       this.page.currentPage = 1
       this.getMaterial()
@@ -105,6 +151,9 @@ export default {
         font-size: 22px;
         height: 40px;
         background-color: #f4f5f6;
+        i{
+          cursor: pointer;
+        }
       }
     }
   }
