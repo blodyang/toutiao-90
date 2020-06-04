@@ -17,14 +17,10 @@
           </el-form-item>
           <el-form-item label="频道列表:">
               <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
-                  <!-- el-option label是显示值 value是存储值 -->
                   <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
           </el-form-item>
           <el-form-item label="时间选择:">
-              <!-- 日期选择器 日期范围-->
-              <!-- 第一种 用监听组件的形式去做搜索 -->
-            <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker> -->
               <el-date-picker  value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange"></el-date-picker>
           </el-form-item>
       </el-form>
@@ -39,7 +35,6 @@
               <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
               <div class='info'>
                   <span>{{ item.title }}</span>
-                  <!-- 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除 -->
                   <el-tag :type="item.status | filterType" class='tag'>{{ item.status | filterStatus }}</el-tag>
                   <span class='date'>{{ item.pubdate }}</span>
               </div>
