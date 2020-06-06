@@ -44,7 +44,7 @@ export default {
     //   点击菜单项时触发
     clickMenu (command) {
       if (command === 'info') {
-
+        this.$router.push('/home/account')
       } else if (command === 'git') {
         //   跳转到git地址
         window.location.href = 'https://www.baidu.com'
