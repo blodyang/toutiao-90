@@ -18,8 +18,8 @@
 
           <el-tab-pane label="全部图片" name="all">
             <div class="img-list">
-              <el-card class="img-card" v-for="item in list" :key="item.id">
-                <img :src="item.url" alt="">
+              <el-card class="img-card" v-for="(item,index) in list" :key="item.id">
+            <img @click="openDialog(index)" :src="item.url" alt />
                 <el-row  class="operate" align="middle" type="flex" justify="space-around">
                   <i @click="collectOrCancel(item)" :style="{ color: item.is_collected ? 'red' : '#000'}" class="el-icon-star-on"></i>
                   <i @click="delImg(item.id)" class="el-icon-delete"></i>
@@ -30,20 +30,26 @@
           <el-tab-pane label="收藏图片" name="collect">
             <div class="img-list">
               <el-card class="img-card" v-for="item in list" :key="item.id">
-                <img :src="item.url" alt="">
+                <img @click="openDialog(index)" :src="item.url" alt />
               </el-card>
             </div>
           </el-tab-pane>
       </el-tabs>
       <el-row type="flex" justify="center">
-                    <el-pagination background layout="prev, pager, next"
-                                :current-page="page.currentPage"
-                                :page-size="page.pageSize"
-                                :total="page.total"
-                                @current-change="changePage">
-                    </el-pagination>
-
-            </el-row>
+          <el-pagination background layout="prev, pager, next"
+                      :current-page="page.currentPage"
+                      :page-size="page.pageSize"
+                      :total="page.total"
+                      @current-change="changePage">
+          </el-pagination>
+        </el-row>
+      <el-dialog @opened="openEnd" :visible="dialogVisible" @close="dialogVisible = false">
+       <el-carousel ref="myCarosel" indicator-position="outside" height="500px">
+         <el-carousel-item v-for="(item,index) in list" :key="index">
+           <img style="width:100%;height:100%" :src="item.url" alt="">
+       </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -51,6 +57,7 @@
 export default {
   data () {
     return {
+      dialogVisible: false, // 弹层显示隐藏
       loading: false,
       activeName: 'all',
       list: [],
@@ -58,10 +65,21 @@ export default {
         currentPage: 1,
         pageSize: 8,
         total: 0
-      }
+      },
+      clickIndex: -1 // 点击的index
     }
   },
   methods: {
+    openEnd () {
+      // 此时已经可以获取走马灯实例了 ref
+      this.$refs.myCarosel.setActiveItem(this.clickIndex)
+    },
+    // 打开弹层
+    openDialog (index) {
+      this.dialogVisible = true // dialog是懒加载 => 第一次没有弹出之前 是没有组件元素的
+      // 没有办法在弹层中立刻做设置索引
+      this.clickIndex = index // 存储一下 点击索引
+    },
     delImg (id) {
       this.$confirm('确认删除该素材?').then(() => {
         this.$axios({

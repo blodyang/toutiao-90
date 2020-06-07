@@ -1,9 +1,11 @@
 
 // 处理路由拦截器 导航守卫
 import router from '../router'
-
+import progtesss from 'nprogress'
+import 'nprogress/nprogress.css'
 // 全局前置守卫  当 路由发生变化时 这个方法里的回调函数就会执行
 router.beforeEach(function (to, from, next) {
+  progtesss.start()
   // 权限拦截 认为有token 让过去 没token不让过
   if (to.path.startsWith('/home')) {
     //   确定要去检查的范围
@@ -16,4 +18,7 @@ router.beforeEach(function (to, from, next) {
   } else {
     next() // 直接放过
   }
+})
+router.afterEach(() => {
+  progtesss.done()
 })

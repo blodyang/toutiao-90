@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="loading">
+  <el-card v-loading="loading" element-loading-text="拼命加载中">
       <bread-crumb slot="header">
         <template slot="title">账户信息</template>
       </bread-crumb>
