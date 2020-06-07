@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
+
 export default {
   data () {
     return {
@@ -34,13 +36,19 @@ export default {
     }
   },
   created () {
-    this.$axios({
-      url: '/user/profile'
-    }).then(result => {
-      this.userInfo = result.data
+    this.getUserInfo()
+    eventBus.$on('updateUserInfo', () => {
+      this.getUserInfo()
     })
   },
   methods: {
+    getUserInfo () {
+      this.$axios({
+        url: '/user/profile'
+      }).then(result => {
+        this.userInfo = result.data
+      })
+    },
     //   点击菜单项时触发
     clickMenu (command) {
       if (command === 'info') {
